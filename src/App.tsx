@@ -4,36 +4,24 @@ import * as THREE from 'three';
 import { Tubes } from './brain-tubes.tsx';
 import { BrainParticles } from './brain-particles.tsx';
 import { data } from './data';
-import { randomRange } from './utils';
 
-const PATHS = data.economics[0].paths;
+function createBrainCurvesFromPaths(): THREE.CatmullRomCurve3[] {
+  const paths = data.economics[0].paths;
 
-const curves: THREE.CatmullRomCurve3[] = [];
-for (let i = 0; i < 100; i++) {
-  const points: THREE.Vector3[] = [];
-  const length = randomRange(0.5, 1);
-  for (let j = 0; j < 100; j++) {
-    points.push(
-      new THREE.Vector3().setFromSphericalCoords(
-        1,
-        Math.PI - (j / 100) * Math.PI * length,
-        (i / 100) * Math.PI * 2,
-      ),
-    );
-  }
-  const tempCurve = new THREE.CatmullRomCurve3(points);
-  curves.push(tempCurve);
+  const brainCurves: THREE.CatmullRomCurve3[] = [];
+  paths.forEach(path => {
+    const points: THREE.Vector3[] = [];
+    for (let i = 0; i < path.length; i += 3) {
+      points.push(new THREE.Vector3(path[i], path[i + 1], path[i + 2]));
+    }
+    const tempCurve = new THREE.CatmullRomCurve3(points);
+    brainCurves.push(tempCurve);
+  });
+
+  return brainCurves;
 }
 
-const brainCurves: THREE.CatmullRomCurve3[] = [];
-PATHS.forEach(path => {
-  const points: THREE.Vector3[] = [];
-  for (let i = 0; i < path.length; i += 3) {
-    points.push(new THREE.Vector3(path[i], path[i + 1], path[i + 2]));
-  }
-  const tempCurve = new THREE.CatmullRomCurve3(points);
-  brainCurves.push(tempCurve);
-});
+const curves = createBrainCurvesFromPaths();
 
 function App() {
   return (
@@ -41,8 +29,8 @@ function App() {
       <color attach="background" args={['black']} />
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <Tubes curves={brainCurves} />
-      <BrainParticles curves={brainCurves} />
+      <Tubes curves={curves} />
+      <BrainParticles curves={curves} />
       <OrbitControls />
     </Canvas>
   );
