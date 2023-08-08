@@ -1,8 +1,8 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Tubes } from './BrainTubes';
-import { BrainParticles } from './BrainParticles';
+import { Tubes } from './brain-tubes.tsx';
+import { BrainParticles } from './brain-particles.tsx';
 import { data } from './data';
 import { randomRange } from './utils';
 

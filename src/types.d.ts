@@ -1,7 +1,7 @@
 import { MaterialNode } from '@react-three/fiber';
 import * as THREE from 'three';
-import { BrainMaterial } from './BrainTubes';
-import { BrainParticleMaterial } from './BrainParticles';
+import { BrainMaterial } from './brain-tubes.tsx';
+import { BrainParticleMaterial } from './brain-particles.tsx';
 
 declare module '@react-three/fiber' {
   interface ThreeElements {
