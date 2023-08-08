@@ -3,30 +3,14 @@ import * as THREE from 'three';
 import { extend, useFrame, useThree } from '@react-three/fiber';
 import { shaderMaterial } from '@react-three/drei';
 
-function Tube(props) {
-  const { curve } = props;
-  const brainMat = React.useRef();
-
-  const { viewport } = useThree();
-
-  useFrame(({ clock, mouse }) => {
-    brainMat.current.uniforms.time.value = clock.getElapsedTime();
-
-    brainMat.current.uniforms.mouse.value = new THREE.Vector3(
-      (mouse.x * viewport.width) / 2,
-      (mouse.y * viewport.height) / 2,
-      0,
-    );
-  });
-
-  const BrainMaterial = shaderMaterial(
-    {
-      time: 0,
-      color: new THREE.Color(0.1, 0.3, 0.6),
-      mouse: new THREE.Vector3(0, 0, 0),
-    },
-    // vertex shader
-    /*glsl*/ `
+export const BrainMaterial = shaderMaterial(
+  {
+    time: 0,
+    color: new THREE.Color(0.1, 0.3, 0.6),
+    mouse: new THREE.Vector3(0, 0, 0),
+  },
+  // vertex shader
+  /*glsl*/ `
     varying vec2 vUv;
     uniform float time;
     uniform vec3 mouse;
@@ -47,8 +31,8 @@ function Tube(props) {
       gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
     }
   `,
-    // fragment shader
-    /*glsl*/ `
+  // fragment shader
+  /*glsl*/ `
     uniform float time;
     uniform vec3 color;
     varying vec2 vUv;
@@ -61,9 +45,26 @@ function Tube(props) {
       gl_FragColor.rgba = vec4(finalColor, hideCorners1 * hideCorners2);
     }
   `,
-  );
+);
 
-  extend({ BrainMaterial });
+extend({ BrainMaterial });
+
+function Tube(props: { curve: THREE.CatmullRomCurve3 }) {
+  const { curve } = props;
+  const brainMat = React.useRef<THREE.ShaderMaterial>(null!);
+
+  const { viewport } = useThree();
+
+  useFrame(({ clock, mouse }) => {
+    brainMat.current.uniforms.time.value = clock.getElapsedTime();
+
+    brainMat.current.uniforms.mouse.value = new THREE.Vector3(
+      (mouse.x * viewport.width) / 2,
+      (mouse.y * viewport.height) / 2,
+      0,
+    );
+  });
+
   return (
     <>
       <mesh>
@@ -81,7 +82,7 @@ function Tube(props) {
   );
 }
 
-export function Tubes(props) {
+export function Tubes(props: { curves: THREE.CatmullRomCurve3[] }) {
   const { curves } = props;
   return (
     <>
